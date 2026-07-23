@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultura Rebel · Panel 2Q 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#1F2D50;
+    --navy-dark:#141d38;
+    --navy-mid:#2c3d6b;
+    --orange:#E8622C;
+    --orange-soft:#f3956b;
+    --cream:#F7F5F1;
+    --gray:#6B7280;
+    --gray-light:#E5E7EB;
+    --red:#C0392B;
+    --green:#4A7C59;
+    --gold:#d9a441;
+    --white:#FFFFFF;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"Segoe UI", Calibri, Arial, sans-serif;
+    background:var(--cream); color:var(--navy);
+  }
+  h1,h2,h3,h4{font-family:Georgia, "Cambria", "Times New Roman", serif; margin:0;}
+  header.top{
+    background:var(--navy); color:white; padding:28px 32px 22px;
+    position:relative; overflow:hidden;
+  }
+  header.top::before{
+    content:""; position:absolute; right:-80px; top:-120px; width:280px; height:280px;
+    border-radius:50%; background:var(--navy-mid); opacity:.55;
+  }
+  header.top .eyebrow{
+    color:var(--orange); font-weight:700; letter-spacing:1.5px; font-size:12px; text-transform:uppercase;
+  }
+  header.top h1{font-size:30px; margin-top:6px; position:relative;}
+  header.top p.sub{color:#CADCFC; margin-top:6px; font-size:14px; position:relative;}
+  nav.tabs{
+    display:flex; gap:4px; background:var(--navy-dark); padding:0 24px; overflow-x:auto;
+    position:sticky; top:0; z-index:50;
+  }
+  nav.tabs button{
+    background:transparent; border:none; color:#B9C2DA; padding:14px 16px; font-size:13.5px;
+    font-weight:600; cursor:pointer; border-bottom:3px solid transparent; white-space:nowrap;
+    font-family:inherit;
+  }
+  nav.tabs button:hover{color:white;}
+  nav.tabs button.active{color:white; border-bottom-color:var(--orange);}
+  main{max-width:1180px; margin:0 auto; padding:28px 20px 60px;}
+  section.panel{display:none;}
+  section.panel.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .panel-head{margin-bottom:20px;}
+  .panel-head .kicker{color:var(--orange); font-weight:700; font-size:12px; letter-spacing:1px; text-transform:uppercase;}
+  .panel-head h2{font-size:24px; margin-top:4px;}
+  .panel-head p{color:var(--gray); font-size:14px; margin-top:6px; max-width:760px; line-height:1.5;}
+
+  .stat-row{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:14px; margin-bottom:22px;}
+  .stat-card{
+    background:white; border-radius:var(--radius); padding:16px 18px; box-shadow:0 1px 3px rgba(20,29,56,.08);
+  }
+  .stat-card .num{font-family:Georgia,serif; font-size:26px; font-weight:700; color:var(--navy);}
+  .stat-card .num.o{color:var(--orange);}
+  .stat-card .lbl{font-size:12px; color:var(--gray); margin-top:4px; line-height:1.35;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .grid1{display:grid; grid-template-columns:1fr; gap:18px;}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr;}}
+
+  .card{
+    background:white; border-radius:var(--radius); padding:18px 18px 12px; box-shadow:0 1px 3px rgba(20,29,56,.08);
+  }
+  .card h3{font-size:15px; font-weight:700; color:var(--navy); margin-bottom:2px; font-family:inherit;}
+  .card .cap{font-size:11.5px; color:var(--gray); margin-bottom:10px;}
+  .chart-wrap{position:relative;}
+  .chart-wrap.h280{height:280px;}
+  .chart-wrap.h320{height:320px;}
+  .chart-wrap.h240{height:240px;}
+
+  .insight{
+    background:var(--cream); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--navy);
+    margin-top:14px; line-height:1.5;
+  }
+  .insight b{color:var(--orange);}
+  .insight.dark{background:var(--navy); color:white;}
+  .insight.dark b{color:var(--orange-soft);}
+
+  .badge{display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; margin-left:6px;}
+  .badge.cdmx{background:#1F2D5022; color:var(--navy);}
+  .badge.qro{background:#E8622C22; color:var(--orange);}
+
+  table.data{width:100%; border-collapse:collapse; font-size:12.5px;}
+  table.data th{text-align:left; padding:7px 8px; color:var(--gray); font-weight:700; border-bottom:2px solid var(--gray-light);}
+  table.data td{padding:7px 8px; border-bottom:1px solid var(--gray-light);}
+  table.data tr:last-child td{border-bottom:none;}
+
+  .howto-step{display:flex; gap:14px; margin-bottom:18px;}
+  .howto-step .num{
+    flex:0 0 32px; height:32px; border-radius:50%; background:var(--navy); color:white;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-family:Georgia,serif;
+  }
+  .howto-step .txt h4{font-size:14.5px; margin-bottom:4px;}
+  .howto-step .txt p{font-size:13px; color:#374151; line-height:1.55; margin:0;}
+  .howto-step .txt code{background:var(--cream); padding:1px 6px; border-radius:4px; font-size:12px;}
+
+  footer{
+    text-align:center; padding:24px; color:var(--gray); font-size:11.5px; border-top:1px solid var(--gray-light);
+  }
+  .pill-toggle{display:inline-flex; background:var(--cream); border-radius:20px; padding:3px; margin-bottom:4px;}
+  .pill-toggle button{border:none; background:transparent; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; color:var(--gray); font-family:inherit;}
+  .pill-toggle button.on{background:var(--navy); color:white;}
+  .note-box{border:1.5px dashed var(--orange); border-radius:8px; padding:12px 14px; font-size:12.5px; color:var(--navy); background:#fff8f4;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Panel de consulta · Equipo de Cultura</div>
+  <h1>Cultura Rebel — 2Q 2026</h1>
+  <p class="sub">Encuesta de salida · Nómina · Rebel Check · Clima Laboral · Reportes Cultura &nbsp;|&nbsp; CDMX vs QRO &nbsp;|&nbsp; Última actualización: <span id="lastUpdated">23 jul 2026</span></p>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="resumen" class="active">Resumen</button>
+  <button data-tab="salida">Encuesta de salida</button>
+  <button data-tab="rotacion">Rotación (nómina)</button>
+  <button data-tab="rebelcheck">Rebel Check</button>
+  <button data-tab="clima">Clima laboral</button>
+  <button data-tab="cultura">Reportes Cultura</button>
+  <button data-tab="comousar">Cómo usar / actualizar</button>
+</nav>
+
+<main>
+
+  <!-- ================= RESUMEN ================= -->
+  <section class="panel active" id="panel-resumen">
+    <div class="panel-head">
+      <div class="kicker">Resumen ejecutivo</div>
+      <h2>El patrón se repite en 5 fuentes de datos distintas</h2>
+      <p>Vista rápida del trimestre. Para el detalle y las preguntas de seguimiento, usa las pestañas de arriba.</p>
+    </div>
+    <div class="stat-row" id="resumenStats"></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Rotación mensual real — CDMX vs QRO</h3>
+        <div class="cap">Fuente: nómina · % bajas del mes / plantilla promedio</div>
+        <div class="chart-wrap h280"><canvas id="chartResumenRotacion"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Razón principal de salida</h3>
+        <div class="cap">Fuente: encuesta de salida · % de encuestados por región</div>
+        <div class="chart-wrap h280"><canvas id="chartResumenRazon"></canvas></div>
+      </div>
+    </div>
+    <div class="insight dark" style="margin-top:18px;">
+      <b>Veredicto:</b> la fuga de personal está concentrada en CDMX y en los primeros 45 días. La causa dominante — con evidencia independiente en encuesta de salida, clima laboral y reportes de cultura — es <b>calidad de liderazgo / favoritismo en sucursal</b>, no sueldo ni capacitación. La carga de trabajo por reducción de personal es una señal secundaria real y va en aumento dentro del trimestre.
+    </div>
+  </section>
+
+  <!-- ================= ENCUESTA DE SALIDA ================= -->
+  <section class="panel" id="panel-salida">
+    <div class="panel-head">
+      <div class="kicker">Encuesta de salida · 2Q 2026</div>
+      <h2>¿Qué dice la gente que se va?</h2>
+      <p>n = 193 respuestas (151 CDMX / 42 QRO), después de quitar duplicados. Filtrado por fecha de envío de la encuesta (abril–junio 2026).</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Volumen de bajas encuestadas por mes</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaVolumen"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Razón principal de salida</h3>
+        <div class="chart-wrap h320"><canvas id="chartSalidaRazon"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>¿Sentiste un trato parejo (sin favoritismos)?</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaTrato"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>¿Recomendarías Rebel Wings como lugar de trabajo?</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaRecomienda"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Relación con el supervisor directo</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaSupervisor"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Condiciones físicas de trabajo</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaCondiciones"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>¿La capacitación te dejó listo?</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaCapacitacion"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>¿Tuviste oportunidad de crecer?</h3>
+        <div class="chart-wrap h240"><canvas id="chartSalidaCrecer"></canvas></div>
+      </div>
+      <div class="card" style="grid-column:1/-1;">
+        <h3>Tendencia dentro del trimestre — Compañía total</h3>
+        <div class="cap">% de bajas que citan cada razón, por mes</div>
+        <div class="chart-wrap h280"><canvas id="chartSalidaTendencia"></canvas></div>
+      </div>
+      <div class="card" style="grid-column:1/-1;">
+        <h3>Temas mencionados espontáneamente en "¿Qué cambiarías?"</h3>
+        <div class="cap">n = 175 respuestas de texto libre · % que menciona cada tema (pregunta 100% abierta, sin catálogo)</div>
+        <div class="chart-wrap h320"><canvas id="chartSalidaTemas"></canvas></div>
+      </div>
+    </div>
+    <div class="insight"><b>Lectura clave:</b> "Liderazgo o trato del jefe" es la razón #1 en CDMX (25.8%, vs 2.4% en QRO). El mismo tema aparece de forma espontánea en 23% de las respuestas de texto libre — no es un artefacto de una sola pregunta.</div>
+  </section>
+
+  <!-- ================= ROTACION / NOMINA ================= -->
+  <section class="panel" id="panel-rotacion">
+    <div class="panel-head">
+      <div class="kicker">Nómina real (no encuesta) · 2Q 2026</div>
+      <h2>La rotación real y el punto ciego de la encuesta</h2>
+      <p>Basado en altas y bajas de nómina, sucursales Rebel Wings CDMX y QRO, área Servicio.</p>
+    </div>
+    <div class="stat-row" id="rotacionStats"></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Rotación mensual — CDMX vs QRO</h3>
+        <div class="chart-wrap h280"><canvas id="chartRotMensual"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Antigüedad REAL al salir (nómina)</h3>
+        <div class="chart-wrap h280"><canvas id="chartRotAntiguedad"></canvas></div>
+      </div>
+      <div class="card" style="grid-column:1/-1;">
+        <h3>Cobertura de la encuesta de salida, por antigüedad</h3>
+        <div class="cap">% de las bajas reales de nómina que sí contestaron la encuesta de salida, por rango de antigüedad</div>
+        <div class="chart-wrap h280"><canvas id="chartCobertura"></canvas></div>
+      </div>
+    </div>
+    <div class="insight"><b>Punto ciego:</b> la encuesta de salida solo alcanza a ~15% de quienes renuncian antes del día 15 en CDMX, contra 69% de cobertura general. Es justo el grupo que más nos interesa entender — hay que instrumentar un contacto más rápido y ligero para ellos (ver pestaña "Rebel Check").</div>
+  </section>
+
+  <!-- ================= REBEL CHECK ================= -->
+  <section class="panel" id="panel-rebelcheck">
+    <div class="panel-head">
+      <div class="kicker">Rebel Check · Onboarding día 1 a día 50</div>
+      <h2>¿Se está dando el seguimiento que el proceso promete?</h2>
+      <p>Cohorte: 344 nuevos ingresos de 2Q 2026 (260 CDMX / 84 QRO), cruzados por nombre con nómina. % calculado sobre quienes ya tenían antigüedad suficiente para llegar a cada etapa.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Cumplimiento del check — Colaborador</h3>
+        <div class="chart-wrap h280"><canvas id="chartRCColab"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Cumplimiento del check — Evaluación del GERENTE</h3>
+        <div class="chart-wrap h280"><canvas id="chartRCGerente"></canvas></div>
+      </div>
+      <div class="card" style="grid-column:1/-1;">
+        <h3>¿La evaluación del gerente en el día 14 anticipa quién se va?</h3>
+        <div class="chart-wrap h280"><canvas id="chartRCPrediccion"></canvas></div>
+      </div>
+    </div>
+    <div class="insight"><b>El hallazgo más contundente:</b> los gerentes de CDMX evalúan a su gente nueva a menos de la mitad de la tasa que los de QRO, en cada etapa (día 14: 25.7% vs 52.2%). El check del día 90 prácticamente no tiene datos en todo el trimestre.</div>
+    <div class="note-box" style="margin-top:14px;">Nota metodológica: la pregunta de autorreporte "¿qué tan probable es que sigas aquí en 3 meses?" (semana 1 / día 14) no discrimina entre quien se queda y quien se va (promedio ~9.3–10/10 en ambos grupos) — probablemente por no ser anónima. Considerar una versión anónima de esa pregunta específica.</div>
+  </section>
+
+  <!-- ================= CLIMA ================= -->
+  <section class="panel" id="panel-clima">
+    <div class="panel-head">
+      <div class="kicker">Encuesta de Clima Laboral · Mayo 2026</div>
+      <h2>La foto de la plantilla activa (no solo de quien se va)</h2>
+      <p>n = 625 respuestas (432 CDMX / 193 QRO), censo aplicado en una sola semana de mayo 2026. Escala 1–5.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Promedio por dimensión</h3>
+        <div class="chart-wrap h280"><canvas id="chartClimaDim"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>¿Cuál es el área de mayor riesgo?</h3>
+        <div class="cap">Compañía total</div>
+        <div class="chart-wrap h280"><canvas id="chartClimaRiesgo"></canvas></div>
+      </div>
+    </div>
+    <div class="insight"><b>Dato que rompe el patrón simple:</b> la plantilla <i>activa</i> de QRO califica su clima un poco peor que la de CDMX en casi todo. Lectura probable: en QRO la gente incómoda se queda más tiempo (mediana 139 días vs 45 en CDMX) en vez de renunciar rápido, así que su malestar se acumula y se refleja en el clima. "Carga laboral" es el riesgo #1 en <b>toda</b> la compañía (25%), parejo en ambas regiones — valida la señal de sobrecarga a nivel sistémico.</div>
+  </section>
+
+  <!-- ================= CULTURA ================= -->
+  <section class="panel" id="panel-cultura">
+    <div class="panel-head">
+      <div class="kicker">Reportes Cultura Rebel · 2Q 2026</div>
+      <div class="kicker" style="display:none"></div>
+      <h2>El canal formal de denuncia, cruzado</h2>
+      <p>n = 70 reportes en el trimestre (43 CDMX / 27 QRO), canal de reporte directo del colaborador.</p>
+    </div>
+    <div class="grid2">
+      <div class="card" style="grid-column:1/-1;">
+        <h3>Reportes por tipo de situación</h3>
+        <div class="cap">N° de reportes (no %)</div>
+        <div class="chart-wrap h320"><canvas id="chartCulturaTipo"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Tendencia mensual de reportes</h3>
+        <div class="cap">N° de reportes (no %)</div>
+        <div class="chart-wrap h240"><canvas id="chartCulturaTendencia"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Estatus de atención (compañía)</h3>
+        <div class="chart-wrap h240"><canvas id="chartCulturaAtencion"></canvas></div>
+      </div>
+    </div>
+    <div class="insight"><b>Lectura clave:</b> "Falta de liderazgo" se reporta 6x más en CDMX que en QRO (6 vs 1). Los reportes en CDMX van en aumento mes a mes (10 → 16 → 17). "Conflicto entre compañeros" es el motivo #1 en ambas regiones — un ángulo horizontal (entre pares) que complementa el vertical (con el jefe).</div>
+  </section>
+
+  <!-- ================= COMO USAR ================= -->
+  <section class="panel" id="panel-comousar">
+    <div class="panel-head">
+      <div class="kicker">Guía</div>
+      <h2>Cómo usar y actualizar este panel</h2>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <h3>Para tu equipo (consulta)</h3>
+      <div class="howto-step">
+        <div class="num">1</div>
+        <div class="txt"><h4>Navega por pestañas</h4><p>Cada pestaña corresponde a una fuente de datos. "Resumen" es el punto de partida para cualquier persona que solo tenga 2 minutos.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">2</div>
+        <div class="txt"><h4>Todo compara CDMX vs QRO</h4><p>Los colores son consistentes en todo el panel: <span class="badge cdmx">CDMX</span> <span class="badge qro">QRO</span>. Los recuadros de color al pie de cada sección ("Lectura clave") son la conclusión ya interpretada — el resto del contenido es el dato crudo.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">3</div>
+        <div class="txt"><h4>Es de solo lectura</h4><p>Este panel muestra <b>datos agregados</b> (porcentajes y promedios), nunca nombres ni datos de una sola persona — así se puede compartir y hospedar con tranquilidad.</p></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <h3>Para quien lo actualiza cada trimestre</h3>
+      <div class="howto-step">
+        <div class="num">1</div>
+        <div class="txt"><h4>Este archivo es 100% estático</h4><p>Es un solo archivo <code>index.html</code> con los datos del 2Q 2026 ya "horneados" adentro (variable <code>DATA</code> al final del archivo, en formato JSON). No se conecta a ninguna base de datos por sí mismo.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">2</div>
+        <div class="txt"><h4>Para el siguiente trimestre</h4><p>Vuelve a correr el mismo análisis con Claude sobre los datos nuevos, pídele que actualice el objeto <code>DATA</code> de este archivo (o que genere una nueva versión), y sube el archivo actualizado a donde esté hospedado.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">3</div>
+        <div class="txt"><h4>Dónde hospedarlo</h4><p>Ve la recomendación detallada en el chat — resumen: <b>GitHub Pages</b> para algo simple y gratis (subes el archivo, listo); <b>Supabase</b> solo si quieres que el equipo pueda alimentar datos nuevos sin pasar por Claude cada vez.</p></div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      Fuentes de este panel: Encuesta de salida 2026, Nómina (altas/bajas), Rebel Check (día 1 a día 50, colaborador y gerente), Encuesta de Clima Laboral 2026, Reportes Cultura Rebel. Periodo: abril–junio 2026 (2Q). Generado con apoyo de Claude.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Rebel Wings · Panel interno de Cultura · Solo datos agregados · 2Q 2026
+</footer>
+
+<script>
+const DATA = {"salida_volumen_mes": {"CDMX": {"Abril": 52, "Mayo": 55, "Junio": 44}, "QRO": {"Abril": 10, "Mayo": 15, "Junio": 17}}, "salida_razon": {"a) Mejor sueldo en otro trabajo": {"CDMX": 10.6, "QRO": 19.0}, "b) Liderazgo o trato del jefe": {"CDMX": 25.8, "QRO": 2.4}, "c) No me capacitaron bien para el puesto": {"CDMX": 1.3, "QRO": 0.0}, "d) Falta de crecimiento o aprendizaje": {"CDMX": 6.0, "QRO": 2.4}, "e) Problemas con compañeros de trabajo": {"CDMX": 8.6, "QRO": 11.9}, "f) Mucho trabajo / carga de trabajo": {"CDMX": 7.9, "QRO": 7.1}, "g) Horarios o turnos": {"CDMX": 9.3, "QRO": 16.7}, "h) Otro": {"CDMX": 30.5, "QRO": 40.5}}, "salida_trato_parejo": {"a) Sí, el trato fue parejo": {"CDMX": 36.4, "QRO": 64.3}, "b) A veces sentí favoritismo": {"CDMX": 26.5, "QRO": 21.4}, "c) Sí sentí favoritismo": {"CDMX": 37.1, "QRO": 14.3}}, "salida_condiciones": {"a) Buenas": {"CDMX": 46.4, "QRO": 69.0}, "b) Regulares": {"CDMX": 36.4, "QRO": 31.0}, "c) Malas": {"CDMX": 17.2, "QRO": 0.0}}, "salida_supervisor": {"a) Muy buena": {"CDMX": 29.1, "QRO": 52.4}, "b) Buena": {"CDMX": 21.9, "QRO": 26.2}, "c) Regular": {"CDMX": 31.8, "QRO": 16.7}, "d) Mala": {"CDMX": 9.9, "QRO": 4.8}, "e) Muy mala": {"CDMX": 7.3, "QRO": 0.0}}, "salida_capacitacion": {"a) Sí": {"CDMX": 58.9, "QRO": 66.7}, "b) Más o menos (aprendí mucho “sobre la marcha”)": {"CDMX": 38.4, "QRO": 33.3}, "c) No, no me dejó listo": {"CDMX": 2.6, "QRO": 0.0}}, "salida_bienvenida": {"a) Si": {"CDMX": 80.1, "QRO": 90.5}, "b) Más o menos": {"CDMX": 17.9, "QRO": 9.5}, "c) No": {"CDMX": 2.0, "QRO": 0.0}}, "salida_crecer": {"a) Sí": {"CDMX": 46.4, "QRO": 81.0}, "b) Más o menos": {"CDMX": 37.7, "QRO": 16.7}, "c) No": {"CDMX": 10.6, "QRO": 0.0}, "d) Nunca quedó claro si había oportunidad de crecer": {"CDMX": 5.3, "QRO": 2.4}}, "salida_recomendaria": {"a) Sí, sin duda": {"CDMX": 31.8, "QRO": 71.4}, "b) Sí, pero con reservas": {"CDMX": 49.7, "QRO": 21.4}, "c) No": {"CDMX": 7.9, "QRO": 0.0}, "d) No estoy seguro": {"CDMX": 10.6, "QRO": 7.1}}, "salida_tiempo_trabajado": {"a) Menos de 15 días": {"CDMX": 7.3, "QRO": 19.0}, "b) 15 días a 1 mes": {"CDMX": 9.3, "QRO": 14.3}, "c) 1-3 meses": {"CDMX": 26.5, "QRO": 14.3}, "d) 4-6 meses": {"CDMX": 17.2, "QRO": 19.0}, "e) 7-12 meses": {"CDMX": 16.6, "QRO": 21.4}, "f) Más de 1 año": {"CDMX": 23.2, "QRO": 11.9}}, "salida_edad": {"18-22 años": {"CDMX": 25.2, "QRO": 35.7}, "23-27 años": {"CDMX": 45.0, "QRO": 47.6}, "28-32 años": {"CDMX": 24.5, "QRO": 11.9}, "33-39 años": {"CDMX": 4.6, "QRO": 4.8}, "40 años o más": {"CDMX": 0.7, "QRO": 0.0}}, "salida_tendencia": {"carga": {"Abril": 1.6, "Mayo": 11.4, "Junio": 9.8}, "liderazgo": {"Abril": 24.2, "Mayo": 21.4, "Junio": 16.4}}, "salida_temas_cambiarias": {"Liderazgo / jefes / supervisores": 23.4, "Favoritismo": 10.3, "Horarios": 6.9, "\"Nada, todo bien\"": 6.9, "Falta de personal / carga": 5.1, "Propinas": 5.1, "Capacitación": 4.0, "Comunicación": 3.4, "Acoso / maltrato": 2.9, "Crecimiento": 2.3}, "salida_n_total": 175, "nomina_rotacion_mensual": {"CDMX": {"Abril": 19.9, "Mayo": 19.3, "Junio": 24.5}, "QRO": {"Abril": 16.2, "Mayo": 10.0, "Junio": 15.0}}, "nomina_antiguedad_real": {"CDMX": {"<15 días": 32.4, "15d-1 mes": 10.5, "1-3 meses": 22.8, "4-6 meses": 12.8, "7-12 meses": 9.6, "+1 año": 11.9}, "QRO": {"<15 días": 23.7, "15d-1 mes": 4.3, "1-3 meses": 15.1, "4-6 meses": 16.1, "7-12 meses": 23.7, "+1 año": 17.2}}, "nomina_mediana_antiguedad": {"CDMX": 45.0, "QRO": 139.0}, "nomina_bajas_totales": {"CDMX": 219, "QRO": 93}, "cobertura_encuesta": {"CDMX": {"<15 días": 15.0, "15d-1 mes": 61.0, "1-3 meses": 80.0, "4-6 meses": 93.0, "7-12 meses": 100.0, "+1 año": 100.0}, "QRO": {"<15 días": 36.0, "15d-1 mes": 100.0, "1-3 meses": 43.0, "4-6 meses": 53.0, "7-12 meses": 41.0, "+1 año": 31.0}}, "rc_funnel_colaborador": {"CDMX": {"dia1": 55.4, "semana1": 48.7, "dia14": 19.9, "dia30": 17.9, "dia50": 10.5}, "QRO": {"dia1": 69.0, "semana1": 34.7, "dia14": 25.4, "dia30": 26.1, "dia50": 27.3}}, "rc_funnel_gerente": {"CDMX": {"dia14_ger": 25.7, "dia30_ger": 23.8, "dia50_ger": 19.8}, "QRO": {"dia14_ger": 52.2, "dia30_ger": 50.0, "dia50_ger": 27.3}}, "rc_prediccion": {"✅ Sí, que continúe": {"pct_se_fue": 35.5, "n": 62}, "⚠️ Sí, pero necesita mejorar en:": {"pct_se_fue": 50.0, "n": 24}, "❌ No, no es apto para el puesto": {"pct_se_fue": 75.0, "n": 4}}, "clima_dimensiones": {"CDMX": {"Comunicación": 4.12, "Liderazgo": 4.17, "Ambiente": 4.18, "Carga laboral": 3.93, "Satisfacción": 4.27, "Calificación General del Clima Laboral": 4.13}, "QRO": {"Comunicación": 4.0, "Liderazgo": 4.06, "Ambiente": 4.09, "Carga laboral": 3.81, "Satisfacción": 4.16, "Calificación General del Clima Laboral": 4.02}}, "clima_area_riesgo_total": {"Carga laboral": 25.1, "Ninguna (equilibrado)": 19.0, "Liderazgo": 14.9, "Comunicación": 14.9, "Ambiente": 12.6, "Satisfacción": 9.4, "Crítico (todas)": 4.0}, "clima_area_riesgo_region": {"CDMX": {"Carga laboral": 24.8, "Ninguna (equilibrado)": 21.1, "Comunicación": 15.3, "Liderazgo": 13.7, "Ambiente": 13.4, "Satisfacción": 8.1, "Crítico (todas)": 3.7}, "QRO": {"Carga laboral": 25.9, "Liderazgo": 17.6, "Ninguna (equilibrado)": 14.5, "Comunicación": 14.0, "Satisfacción": 12.4, "Ambiente": 10.9, "Crítico (todas)": 4.7}}, "clima_n": 625, "clima_n_region": {"CDMX": 432, "QRO": 193}, "clima_estado_total": {"🟢 Excelente": 39.5, "🟢 Muy bueno": 24.0, "🟡 Aceptable": 15.2, "🟠 Bajo": 10.1, "🔴 Crítico": 7.4, "🔴 Alto Riesgo": 3.8}, "clima_estado_region": {"CDMX": {"🟢 Excelente": 41.0, "🟢 Muy bueno": 24.5, "🟡 Aceptable": 14.6, "🟠 Bajo": 10.2, "🔴 Crítico": 6.0, "🔴 Alto Riesgo": 3.7}, "QRO": {"🟢 Excelente": 36.3, "🟢 Muy bueno": 22.8, "🟡 Aceptable": 16.6, "🔴 Crítico": 10.4, "🟠 Bajo": 9.8, "🔴 Alto Riesgo": 4.1}}, "cultura_n": 70, "cultura_por_region": {"CDMX": 43, "QRO": 27}, "cultura_tipo": {"CDMX": {"Conflicto entre compañeros": 20, "Clima Laboral": 7, "Acoso laboral/Discriminación/Favoritismos": 7, "Falta de liderazgo de Supervisores/Regionales": 6, "Pago de Propinas": 2, "Uso de Uniformes": 1}, "QRO": {"Conflicto entre compañeros": 17, "Acoso laboral/Discriminación/Favoritismos": 4, "Clima Laboral": 3, "Pago de Propinas": 1, "Falta de liderazgo de Supervisores/Regionales": 1, "Actas administrativas": 1}}, "cultura_tendencia_mes": {"CDMX": {"Abril": 10, "Mayo": 16, "Junio": 17}, "QRO": {"Abril": 6, "Mayo": 15, "Junio": 6}}, "cultura_atencion": {"✅ Resuelto": 64, "❌ Cerrado sin acción": 3, "🕵🏼‍♀️ En atención": 2, "🚧 En seguimiento": 1}};
+
+const NAVY = "#1F2D50", ORANGE = "#E8622C", GRAY="#9aa1ac", RED="#C0392B", GREEN="#4A7C59", GOLD="#d9a441", NAVY_SOFT="#5b6a94";
+Chart.defaults.font.family = "Segoe UI, Calibri, Arial, sans-serif";
+Chart.defaults.font.size = 11.5;
+Chart.defaults.color = "#374151";
+
+function shortLabel(s){
+  return s.replace(/^[a-z]\)\s*/i,'').replace(/📌|🔵|🔴|✅|❌|⚠️|🕵🏼‍♀️|🧑🏼‍💼|🚧/g,'').trim();
+}
+
+function barChart(id, labels, seriesCDMX, seriesQRO, opts={}){
+  const ctx = document.getElementById(id);
+  const suffix = opts.pct===false ? '' : '%';
+  return new Chart(ctx, {
+    type: opts.horizontal ? 'bar' : 'bar',
+    data:{ labels, datasets:[
+      {label:'CDMX', data:seriesCDMX, backgroundColor:NAVY, borderRadius:3, maxBarThickness:34},
+      {label:'QRO', data:seriesQRO, backgroundColor:ORANGE, borderRadius:3, maxBarThickness:34},
+    ]},
+    options:{
+      indexAxis: opts.horizontal ? 'y' : 'x',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:true, position:'top', align:'end', labels:{boxWidth:12, usePointStyle:true, pointStyle:'circle'}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed[opts.horizontal?'x':'y']}${suffix}`}} },
+      scales:{
+        x:{ grid:{display:opts.horizontal}, ticks:{callback:v=>opts.horizontal? v+suffix: undefined} , max: opts.horizontal? (opts.max||100): undefined},
+        y:{ grid:{display:!opts.horizontal}, max: opts.horizontal? undefined : (opts.max||100), ticks:{callback:v=>!opts.horizontal? v+suffix: undefined} }
+      }
+    }
+  });
+}
+
+function lineChart(id, labels, series, opts={}){
+  const ctx = document.getElementById(id);
+  const suffix = opts.pct===false ? '' : '%';
+  return new Chart(ctx, {
+    type:'line',
+    data:{labels, datasets:series.map(s=>({label:s.label, data:s.data, borderColor:s.color, backgroundColor:s.color, tension:.3, borderWidth:3, pointRadius:4}))},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top', align:'end', labels:{boxWidth:12,usePointStyle:true,pointStyle:'circle'}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}${suffix}`}}},
+      scales:{y:{ticks:{callback:v=>v+suffix}, suggestedMax: opts.suggestedMax===undefined?30:opts.suggestedMax}}
+    }
+  });
+}
+
+function stackedBar(id, rows, order, colors, labels){
+  // rows: {region: {cat: pct}}
+  const ctx = document.getElementById(id);
+  const regions = Object.keys(rows);
+  const datasets = order.map((cat,i)=>({
+    label: labels[i], data: regions.map(r=>rows[r][cat]||0), backgroundColor: colors[i], stack:'s'
+  }));
+  return new Chart(ctx, {
+    type:'bar',
+    data:{labels: regions, datasets},
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom', labels:{boxWidth:12,usePointStyle:true,pointStyle:'circle', font:{size:10.5}}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x}%`}}},
+      scales:{x:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}, y:{stacked:true}}
+    }
+  });
+}
+
+function doughnut(id, labels, values, colors){
+  const ctx = document.getElementById(id);
+  return new Chart(ctx, {
+    type:'doughnut',
+    data:{labels, datasets:[{data:values, backgroundColor:colors, borderWidth:2, borderColor:'#fff'}]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'right', labels:{boxWidth:11, font:{size:10.5}}}}}
+  });
+}
+
+function hBarSingle(id, labels, values, colorFn){
+  const ctx = document.getElementById(id);
+  return new Chart(ctx, {
+    type:'bar',
+    data:{labels, datasets:[{data:values, backgroundColor:labels.map(colorFn), borderRadius:3}]},
+    options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x}%`}}},
+      scales:{x:{max:Math.max(...values)*1.25, ticks:{callback:v=>v+'%'}}}}
+  });
+}
+
+// ---------- TABS ----------
+document.querySelectorAll('#tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- RESUMEN STATS ----------
+const resumenStats = [
+  {n:"2.4x", l:"Rotación mensual CDMX vs QRO en junio", o:true},
+  {n:"45 días", l:"Mediana de antigüedad al salir en CDMX (QRO: 139 días)"},
+  {n:"63%", l:"Reportó favoritismo al salir en CDMX (QRO: 36%)", o:true},
+  {n:"~2x", l:"Menos evaluaciones de gerente completadas en CDMX vs QRO"},
+];
+document.getElementById('resumenStats').innerHTML = resumenStats.map(s=>`
+  <div class="stat-card"><div class="num ${s.o?'o':''}">${s.n}</div><div class="lbl">${s.l}</div></div>
+`).join('');
+
+// ---------- RESUMEN CHARTS ----------
+{
+  const rot = DATA.nomina_rotacion_mensual;
+  barChart('chartResumenRotacion', ['Abril','Mayo','Junio'],
+    ['Abril','Mayo','Junio'].map(m=>rot.CDMX[m]), ['Abril','Mayo','Junio'].map(m=>rot.QRO[m]), {max:30});
+
+  const razon = DATA.salida_razon;
+  const cats = Object.keys(razon).sort((a,b)=>razon[b].CDMX-razon[a].CDMX).slice(0,5);
+  barChart('chartResumenRazon', cats.map(shortLabel), cats.map(c=>razon[c].CDMX), cats.map(c=>razon[c].QRO), {horizontal:true, max:45});
+}
+
+// ---------- SALIDA ----------
+{
+  const vol = DATA.salida_volumen_mes;
+  barChart('chartSalidaVolumen', ['Abril','Mayo','Junio'],
+    ['Abril','Mayo','Junio'].map(m=>vol.CDMX[m]), ['Abril','Mayo','Junio'].map(m=>vol.QRO[m]), {max:60});
+
+  const razon = DATA.salida_razon;
+  const rcats = Object.keys(razon).sort((a,b)=>razon[b].CDMX-razon[a].CDMX);
+  barChart('chartSalidaRazon', rcats.map(shortLabel), rcats.map(c=>razon[c].CDMX), rcats.map(c=>razon[c].QRO), {horizontal:true, max:45});
+
+  const trato = DATA.salida_trato_parejo;
+  stackedBar('chartSalidaTrato', trato_rows(trato), Object.keys(trato), [GREEN,GOLD,RED], Object.keys(trato).map(shortLabel));
+
+  const rec = DATA.salida_recomendaria;
+  stackedBar('chartSalidaRecomienda', trato_rows(rec), Object.keys(rec), [GREEN,GOLD,RED,GRAY], Object.keys(rec).map(shortLabel));
+
+  const sup = DATA.salida_supervisor;
+  stackedBar('chartSalidaSupervisor', trato_rows(sup), Object.keys(sup), [GREEN,'#8fbf9f',GOLD,'#e08a7d',RED], Object.keys(sup).map(shortLabel));
+
+  const cond = DATA.salida_condiciones;
+  stackedBar('chartSalidaCondiciones', trato_rows(cond), Object.keys(cond), [GREEN,GOLD,RED], Object.keys(cond).map(shortLabel));
+
+  const cap = DATA.salida_capacitacion;
+  stackedBar('chartSalidaCapacitacion', trato_rows(cap), Object.keys(cap), [GREEN,GOLD,RED], Object.keys(cap).map(shortLabel));
+
+  const crec = DATA.salida_crecer;
+  stackedBar('chartSalidaCrecer', trato_rows(crec), Object.keys(crec), [GREEN,GOLD,RED,GRAY], Object.keys(crec).map(shortLabel));
+
+  const tend = DATA.salida_tendencia;
+  lineChart('chartSalidaTendencia', ['Abril','Mayo','Junio'], [
+    {label:'Carga de trabajo / falta de personal', data:['Abril','Mayo','Junio'].map(m=>tend.carga[m]), color:RED},
+    {label:'Liderazgo / trato del jefe', data:['Abril','Mayo','Junio'].map(m=>tend.liderazgo[m]), color:NAVY},
+  ]);
+
+  const temas = DATA.salida_temas_cambiarias;
+  const tcats = Object.keys(temas).sort((a,b)=>temas[b]-temas[a]);
+  hBarSingle('chartSalidaTemas', tcats, tcats.map(t=>temas[t]), l=>(l.includes('Liderazgo')||l.includes('Favoritismo')||l.includes('Acoso'))?ORANGE:NAVY);
+}
+function trato_rows(obj){
+  // obj: {cat: {CDMX, QRO}} -> {CDMX:{cat:val}, QRO:{cat:val}}
+  const rows = {CDMX:{}, QRO:{}};
+  Object.entries(obj).forEach(([cat,vals])=>{ rows.CDMX[cat]=vals.CDMX; rows.QRO[cat]=vals.QRO; });
+  return rows;
+}
+
+// ---------- ROTACION ----------
+{
+  const stats = [
+    {n:DATA.nomina_bajas_totales.CDMX, l:"Bajas reales en CDMX (2Q)"},
+    {n:DATA.nomina_bajas_totales.QRO, l:"Bajas reales en QRO (2Q)"},
+    {n:DATA.nomina_mediana_antiguedad.CDMX+" días", l:"Mediana de antigüedad al salir — CDMX", o:true},
+    {n:DATA.nomina_mediana_antiguedad.QRO+" días", l:"Mediana de antigüedad al salir — QRO"},
+  ];
+  document.getElementById('rotacionStats').innerHTML = stats.map(s=>`
+    <div class="stat-card"><div class="num ${s.o?'o':''}">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
+
+  const rot = DATA.nomina_rotacion_mensual;
+  barChart('chartRotMensual', ['Abril','Mayo','Junio'],
+    ['Abril','Mayo','Junio'].map(m=>rot.CDMX[m]), ['Abril','Mayo','Junio'].map(m=>rot.QRO[m]), {max:30});
+
+  const ant = DATA.nomina_antiguedad_real;
+  const albl = Object.keys(ant.CDMX);
+  barChart('chartRotAntiguedad', albl, albl.map(k=>ant.CDMX[k]), albl.map(k=>ant.QRO[k]), {max:38});
+
+  const cov = DATA.cobertura_encuesta;
+  const clbl = Object.keys(cov.CDMX);
+  barChart('chartCobertura', clbl, clbl.map(k=>cov.CDMX[k]), clbl.map(k=>cov.QRO[k]), {max:110});
+}
+
+// ---------- REBEL CHECK ----------
+{
+  const fc = DATA.rc_funnel_colaborador;
+  const stages1 = Object.keys(fc.CDMX);
+  const stageLbl1 = {dia1:'Día 1', semana1:'Semana 1', dia14:'Día 14', dia30:'Día 30', dia50:'Día 50'};
+  barChart('chartRCColab', stages1.map(s=>stageLbl1[s]), stages1.map(s=>fc.CDMX[s]), stages1.map(s=>fc.QRO[s]), {max:75});
+
+  const fg = DATA.rc_funnel_gerente;
+  const stages2 = Object.keys(fg.CDMX);
+  const stageLbl2 = {dia14_ger:'Día 14', dia30_ger:'Día 30', dia50_ger:'Día 50'};
+  barChart('chartRCGerente', stages2.map(s=>stageLbl2[s]), stages2.map(s=>fg.CDMX[s]), stages2.map(s=>fg.QRO[s]), {max:60});
+
+  const pred = DATA.rc_prediccion;
+  const plbl = Object.keys(pred);
+  const ctx = document.getElementById('chartRCPrediccion');
+  new Chart(ctx, {
+    type:'bar',
+    data:{labels: plbl.map(shortLabel).map((l,i)=>l+` (n=${pred[plbl[i]].n})`),
+      datasets:[
+        {label:'Terminó yéndose', data:plbl.map(k=>pred[k].pct_se_fue), backgroundColor:RED, stack:'s'},
+        {label:'Sigue activo', data:plbl.map(k=>100-pred[k].pct_se_fue), backgroundColor:GREEN, stack:'s'},
+      ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom', labels:{boxWidth:12,usePointStyle:true,pointStyle:'circle'}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`}}},
+      scales:{y:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}, x:{stacked:true}}}
+  });
+}
+
+// ---------- CLIMA ----------
+{
+  const dim = DATA.clima_dimensiones;
+  const dlbl = ['Comunicación','Liderazgo','Ambiente','Carga laboral','Satisfacción'];
+  const ctx = document.getElementById('chartClimaDim');
+  new Chart(ctx, {
+    type:'bar',
+    data:{labels:dlbl, datasets:[
+      {label:'CDMX', data:dlbl.map(k=>dim.CDMX[k]), backgroundColor:NAVY, borderRadius:3},
+      {label:'QRO', data:dlbl.map(k=>dim.QRO[k]), backgroundColor:ORANGE, borderRadius:3},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top', align:'end', labels:{boxWidth:12,usePointStyle:true,pointStyle:'circle'}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}/5`}}},
+      scales:{y:{min:0, max:5, ticks:{stepSize:1}}}}
+  });
+
+  const riesgo = DATA.clima_area_riesgo_total;
+  const rlbl = Object.keys(riesgo).sort((a,b)=>riesgo[b]-riesgo[a]);
+  hBarSingle('chartClimaRiesgo', rlbl, rlbl.map(r=>riesgo[r]), l=>l==='Carga laboral'?RED:(l==='Liderazgo'?GOLD:NAVY));
+}
+
+// ---------- CULTURA ----------
+{
+  const tipo = DATA.cultura_tipo;
+  const allCats = Object.keys(Object.assign({}, tipo.CDMX, tipo.QRO)).sort((a,b)=>(tipo.CDMX[b]||0)-(tipo.CDMX[a]||0));
+  barChart('chartCulturaTipo', allCats.map(shortLabel), allCats.map(c=>tipo.CDMX[c]||0), allCats.map(c=>tipo.QRO[c]||0), {max:22, pct:false});
+
+  const tend = DATA.cultura_tendencia_mes;
+  lineChart('chartCulturaTendencia', ['Abril','Mayo','Junio'], [
+    {label:'CDMX', data:['Abril','Mayo','Junio'].map(m=>tend.CDMX[m]), color:NAVY},
+    {label:'QRO', data:['Abril','Mayo','Junio'].map(m=>tend.QRO[m]), color:ORANGE},
+  ], {pct:false, suggestedMax:20});
+
+  const at = DATA.cultura_atencion;
+  const albl = Object.keys(at).map(shortLabel);
+  doughnut('chartCulturaAtencion', albl, Object.values(at), [GREEN,RED,GOLD,NAVY_SOFT,GRAY]);
+}
+</script>
+</body>
+</html>
